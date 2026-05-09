@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PurePath AI — Services Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#08090c;--sur:#0f1115;--sur2:#14161c;
+  --gold:#c9a84c;--glight:#e2c06a;--gpale:rgba(201,168,76,0.10);
+  --white:#f2f0eb;--dim:#7c7a72;--border:rgba(201,168,76,0.15);
+  --green:#22c55e;--gpbg:rgba(34,197,94,0.10);
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--white);min-height:100vh;padding:2rem 1rem}
+@media print{
+  body{background:#fff!important;color:#111!important;padding:0}
+  .no-print{display:none!important}
+  .card,.pkg{break-inside:avoid;border-color:#ddd!important;background:#fafafa!important}
+  .gold-text{color:#a07a20!important}
+  .dim{color:#555!important}
+}
+.page{max-width:820px;margin:0 auto}
+
+/* TOP TOOLBAR */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px}
+.toolbar-brand{font-family:var(--fh);font-size:1rem;font-weight:800;display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;background:var(--gold);border-radius:50%;display:inline-block}
+.toolbar-actions{display:flex;gap:8px}
+.tbtn{background:var(--sur);border:1px solid var(--border);color:var(--white);border-radius:7px;padding:8px 16px;font-family:var(--fh);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.tbtn:hover{border-color:var(--gold);color:var(--gold)}
+.tbtn.gold{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.tbtn.gold:hover{background:var(--glight)}
+
+/* HEADER CARD */
+.hcard{background:var(--sur);border:1px solid var(--border);border-radius:16px;padding:2.25rem 2.5rem 2rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.hcard::before{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.07) 0%,transparent 65%);pointer-events:none}
+.hcard-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1.25rem;margin-bottom:1.75rem}
+.brand-block .bname{font-family:var(--fh);font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.brand-block .btag{font-size:.72rem;color:var(--dim);margin-top:3px;letter-spacing:.05em}
+.brand-block .bloc{font-size:.72rem;color:var(--gold);margin-top:2px;font-weight:500}
+.meta-block{text-align:right}
+.meta-block .ml{font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.meta-block .mv{font-family:var(--fh);font-size:.88rem;font-weight:700}
+.to-row{background:var(--sur2);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.to-l .tl{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem;font-weight:700}
+.to-l .biz{font-family:var(--fh);font-size:1.1rem;font-weight:700}
+.to-l .biz-sub{font-size:.78rem;color:var(--dim);margin-top:2px}
+.to-r{font-size:.72rem;color:var(--dim);font-style:italic}
+.editable{border:none;background:transparent;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;outline:none;border-bottom:1px dashed rgba(201,168,76,0.35);min-width:120px;transition:border-color .2s}
+.editable:focus{border-color:var(--gold)}
+
+/* INTRO */
+.intro{background:var(--gpale);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.5rem;margin-bottom:1.5rem;font-size:.85rem;color:var(--dim);line-height:1.75;font-weight:300}
+.intro strong{color:var(--white);font-weight:500}
+
+/* SECTION DIVIDER */
+.sdiv{display:flex;align-items:center;gap:10px;margin:1.75rem 0 1.1rem}
+.sdiv-line{flex:1;height:1px;background:var(--border)}
+.sdiv-label{font-size:.64rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+
+/* SERVICE CARDS */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--sur);border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;transition:all .2s;position:relative;cursor:pointer}
+.card:hover{border-color:rgba(201,168,76,0.35)}
+.card.selected{border-color:var(--gold);background:var(--gpale)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
+.ct-left{display:flex;align-items:center;gap:9px}
+.cicon{font-size:1.35rem;flex-shrink:0}
+.ctitle{font-family:var(--fh);font-size:.95rem;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.cprice-wrap{text-align:right;flex-shrink:0}
+.cprice{font-family:var(--fh);font-size:1.05rem;font-weight:800;color:var(--gold);line-height:1}
+.cfreq{font-size:.62rem;color:var(--dim);margin-top:2px}
+.cdesc{font-size:.78rem;color:var(--dim);line-height:1.65;margin-bottom:.65rem;font-weight:300}
+.ctags{display:flex;gap:5px;flex-wrap:wrap}
+.ctag{font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--sur2);color:var(--dim);border-radius:4px;padding:2px 7px;border:1px solid rgba(255,255,255,.05)}
+.ctag.g{background:var(--gpale);color:var(--gold);border-color:var(--border)}
+.ctime{font-size:.64rem;color:var(--dim);margin-top:.6rem;font-style:italic}
+.sel-badge{position:absolute;top:.75rem;right:.75rem;width:18px;height:18px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:transparent;transition:all .2s;background:transparent}
+.card.selected .sel-badge{background:var(--gold);border-color:var(--gold);color:var(--bg);font-size:.75rem}
+
+/* PACKAGES */
+.pkgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pkg{background:var(--sur);border:1.5px solid var(--border);border-radius:12px;padding:1.5rem 1.25rem;text-align:center;position:relative;transition:all .2s;cursor:pointer}
+.pkg:hover{border-color:rgba(201,168,76,0.35);transform:translateY(-2px)}
+.pkg.hot{border-color:var(--gold);background:var(--gpale)}
+.pkg.hot::before{content:'Best Value';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 12px;border-radius:50px;white-space:nowrap;font-family:var(--fh)}
+.pkg-name{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
+.pkg-price{font-family:var(--fh);font-size:2rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.pkg-price sub{font-size:.9rem;font-weight:400;color:var(--dim)}
+.pkg-per{font-size:.72rem;color:var(--dim);margin:.3rem 0 1.1rem;font-weight:300}
+.pkg-items{list-style:none;text-align:left;margin-bottom:1.25rem}
+.pkg-items li{font-size:.78rem;color:var(--dim);padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:8px;font-weight:300;line-height:1.5}
+.pkg-items li::before{content:'→';color:var(--gold);flex-shrink:0;font-size:.72rem;margin-top:1px}
+.pkg-btn{width:100%;background:transparent;border:1px solid var(--border);color:var(--white);border-radius:7px;padding:10px;font-family:var(--fh);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.pkg.hot .pkg-btn,.pkg-btn:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+
+/* SUMMARY */
+.summary{background:var(--sur);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.25rem}
+.summary-title{font-family:var(--fh);font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.sum-list{min-height:40px;margin-bottom:1rem}
+.sum-empty{font-size:.8rem;color:var(--dim);font-style:italic;font-weight:300;padding:.5rem 0}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.83rem}
+.sum-row .sname{color:var(--white);font-weight:400;display:flex;align-items:center;gap:8px}
+.sum-row .sname .sicon{font-size:.9rem}
+.sum-row .sprice{font-family:var(--fh);font-weight:700;color:var(--gold)}
+.sum-row .sfq{font-size:.68rem;color:var(--dim);margin-left:3px}
+.sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:.9rem;margin-top:.25rem}
+.sum-total .tl{font-family:var(--fh);font-size:.95rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.sum-total .ta{font-family:var(--fh);font-size:1.7rem;font-weight:800;color:var(--gold);letter-spacing:-.03em}
+.sum-note{font-size:.72rem;color:var(--dim);margin-top:.5rem;font-style:italic;font-weight:300}
+.sum-save{display:inline-flex;align-items:center;gap:5px;background:var(--gpbg);color:var(--green);border-radius:5px;padding:4px 10px;font-size:.7rem;font-weight:700;margin-top:.5rem}
+
+/* WHY US */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:.25rem}
+.why-card{background:var(--sur2);border:1px solid var(--border);border-radius:10px;padding:1.1rem;text-align:center}
+.why-icon{font-size:1.5rem;display:block;margin-bottom:.5rem}
+.why-card h4{font-family:var(--fh);font-size:.85rem;font-weight:700;margin-bottom:.3rem}
+.why-card p{font-size:.74rem;color:var(--dim);line-height:1.55;font-weight:300}
+
+/* TERMS */
+.terms{background:var(--sur);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-top:1.25rem}
+.terms h4{font-family:var(--fh);font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem}
+.terms-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem .5rem}
+.term-item{font-size:.76rem;color:var(--dim);line-height:1.55;display:flex;gap:7px;font-weight:300}
+.term-item::before{content:'✓';color:var(--gold);flex-shrink:0;font-weight:700}
+
+/* SIGN ROW */
+.sign-row{display:flex;gap:12px;margin-top:1.25rem;flex-wrap:wrap}
+.sign-box{flex:1;min-width:200px;background:var(--sur);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem}
+.sign-box .sl{font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem}
+.sign-line{height:1.5px;background:var(--border);margin-top:1.5rem}
+.sign-box .sname{font-size:.72rem;color:var(--dim);margin-top:.4rem}
+
+/* FOOTER */
+.pfooter{text-align:center;padding:1.5rem 0 .5rem;font-size:.72rem;color:var(--dim);font-weight:300}
+.pfooter strong{color:var(--gold);font-weight:600}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .sgrid,.pkgs,.terms-grid,.why-grid{grid-template-columns:1fr}
+  .hcard{padding:1.5rem}
+  .hcard-top{flex-direction:column}.meta-block{text-align:left}
+  body{padding:1rem .5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar no-print">
+  <div class="toolbar-brand"><span class="dot"></span> PurePath AI — Proposal Builder</div>
+  <div class="toolbar-actions">
+    <button class="tbtn" onclick="resetAll()">↺ Reset</button>
+    <button class="tbtn gold" onclick="window.print()">⎙ Download / Print PDF</button>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- HEADER -->
+<div class="hcard">
+  <div class="hcard-top">
+    <div class="brand-block">
+      <div class="bname">🌊 PurePath AI</div>
+      <div class="btag">AI Services & Business Automation</div>
+      <div class="bloc">📍 Coimbatore, Tamil Nadu</div>
+    </div>
+    <div class="meta-block">
+      <div class="ml">Proposal Date</div>
+      <div class="mv" id="propDate"></div>
+      <div class="ml" style="margin-top:.5rem">Valid Until</div>
+      <div class="mv" id="validDate"></div>
+      <div class="ml" style="margin-top:.5rem">Proposal #</div>
+      <div class="mv" id="propNum"></div>
+    </div>
+  </div>
+  <div class="to-row">
+    <div class="to-l">
+      <div class="tl">Prepared For</div>
+      <div class="biz"><input class="editable" id="bizName" value="Business Name" style="font-family:var(--fh);font-size:1.1rem;font-weight:700;width:220px"/></div>
+      <div class="biz-sub"><input class="editable" id="bizType" value="Restaurant / Clinic / Shop — Coimbatore" style="font-size:.78rem;width:280px;color:var(--dim)"/></div>
+    </div>
+    <div class="to-r no-print">✏️ Click the fields above to personalise</div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  Hi <strong><span id="introName">there</span></strong> 👋 — I'm reaching out because I believe <strong>AI can save your business real time and money</strong>, starting this week. PurePath AI is a Coimbatore-based AI services company. We set up smart tools for local businesses — chatbots, content automation, invoicing systems, and more. <strong>Everything below is practical, affordable, and done for you.</strong> Select what you need and I'll get started within 48 hours.
+</div>
+
+<!-- INDIVIDUAL SERVICES -->
+<div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Pick Individual Services</div><div class="sdiv-line"></div></div>
+<div class="sgrid" id="servicesGrid">
+
+  <div class="card" data-name="WhatsApp AI Chatbot Setup" data-icon="💬" data-price="3999" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">💬</span><span class="ctitle">WhatsApp AI Chatbot Setup</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹3,999</div><div class="cfreq">one-time setup</div></div>
+    </div>
+    <div class="cdesc">We build a chatbot on your WhatsApp Business that automatically replies to customer questions, shares your menu or price list, handles bookings, and follows up — 24/7 without you doing anything.</div>
+    <div class="ctags"><span class="ctag g">Most Requested</span><span class="ctag">Restaurants</span><span class="ctag">Clinics</span><span class="ctag">Salons</span></div>
+    <div class="ctime">⏱ Delivered in 3–4 days</div>
+  </div>
+
+  <div class="card" data-name="30-Day AI Social Media Content" data-icon="📱" data-price="2999" data-freq="per month" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">📱</span><span class="ctitle">30-Day AI Social Media Content</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹2,999</div><div class="cfreq">per month</div></div>
+    </div>
+    <div class="cdesc">We create 30 ready-to-post Instagram captions, 8 Reel scripts, and 10 Facebook posts every month — in your brand voice, in Tamil or English. You just copy, paste, and post. No writing needed from you.</div>
+    <div class="ctags"><span class="ctag g">High ROI</span><span class="ctag">All Businesses</span><span class="ctag">Instagram</span></div>
+    <div class="ctime">⏱ First batch delivered in 48 hours</div>
+  </div>
+
+  <div class="card" data-name="AI Brand Design Package" data-icon="🎨" data-price="4999" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">🎨</span><span class="ctitle">AI Brand Design Package</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹4,999</div><div class="cfreq">one-time</div></div>
+    </div>
+    <div class="cdesc">Full brand kit using AI design tools — logo, colour palette, visiting card design, WhatsApp DP, 5 social media post templates, and a banner. Everything designed to look professional and consistent.</div>
+    <div class="ctags"><span class="ctag g">New Businesses</span><span class="ctag">Rebranding</span><span class="ctag">Design</span></div>
+    <div class="ctime">⏱ Delivered in 4–5 days</div>
+  </div>
+
+  <div class="card" data-name="Online Booking Page (Tamil + English)" data-icon="📅" data-price="2499" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">📅</span><span class="ctitle">Online Booking Page</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹2,499</div><div class="cfreq">one-time setup</div></div>
+    </div>
+    <div class="cdesc">A simple Tamil + English booking page your customers can use to book appointments directly from your WhatsApp or Instagram link. No app needed, no confusion. Ideal for clinics, salons, tutors, gyms.</div>
+    <div class="ctags"><span class="ctag">Clinics</span><span class="ctag">Salons</span><span class="ctag">Coaching</span><span class="ctag">Gyms</span></div>
+    <div class="ctime">⏱ Live within 2 days</div>
+  </div>
+
+  <div class="card" data-name="GST Invoice Generator Tool" data-icon="🧾" data-price="1999" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">🧾</span><span class="ctitle">GST Invoice Generator Tool</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹1,999</div><div class="cfreq">one-time setup</div></div>
+    </div>
+    <div class="cdesc">A simple web tool where you type in items and it instantly generates a proper GST invoice PDF — with your logo, address, and GSTIN. No more Excel juggling. Works on mobile too. In Tamil & English.</div>
+    <div class="ctags"><span class="ctag">Shops</span><span class="ctag">Traders</span><span class="ctag">Freelancers</span><span class="ctag g">Save Time Daily</span></div>
+    <div class="ctime">⏱ Delivered in 2 days</div>
+  </div>
+
+  <div class="card" data-name="AI Email & Follow-Up System" data-icon="📧" data-price="3499" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">📧</span><span class="ctitle">AI Email & Follow-Up System</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹3,499</div><div class="cfreq">one-time setup</div></div>
+    </div>
+    <div class="cdesc">We set up automatic email sequences that follow up with your leads, send quotes and confirmations, answer common questions, and remind customers about appointments — all without you touching a keyboard.</div>
+    <div class="ctags"><span class="ctag">B2B Businesses</span><span class="ctag">Clinics</span><span class="ctag">Coaches</span></div>
+    <div class="ctime">⏱ Setup in 3–4 days</div>
+  </div>
+
+  <div class="card" data-name="Digital Menu with WhatsApp Link" data-icon="🍽️" data-price="1499" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">🍽️</span><span class="ctitle">Digital Menu with WhatsApp Link</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹1,499</div><div class="cfreq">one-time</div></div>
+    </div>
+    <div class="cdesc">A beautiful, mobile-friendly digital menu page with photos, prices, and a WhatsApp order button. Customers scan a QR code or click your link — and they're ordering instantly. No app, no printing costs.</div>
+    <div class="ctags"><span class="ctag g">Restaurants</span><span class="ctag">Tiffin</span><span class="ctag">Bakeries</span><span class="ctag">Cafes</span></div>
+    <div class="ctime">⏱ Live in 1–2 days</div>
+  </div>
+
+  <div class="card" data-name="Google Business Profile Setup & Optimisation" data-icon="📍" data-price="1999" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">📍</span><span class="ctitle">Google Business Profile Setup</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹1,999</div><div class="cfreq">one-time</div></div>
+    </div>
+    <div class="cdesc">We fully set up and optimise your Google Business listing so your shop appears when people search on Google Maps. Add photos, hours, services, and get you showing up for "near me" searches in Coimbatore.</div>
+    <div class="ctags"><span class="ctag">All Local Businesses</span><span class="ctag g">More Walk-ins</span></div>
+    <div class="ctime">⏱ Done in 1 day</div>
+  </div>
+
+  <div class="card" data-name="Monthly AI Content + Design Retainer" data-icon="🔄" data-price="4999" data-freq="per month" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">🔄</span><span class="ctitle">Monthly Content + Design Retainer</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹4,999</div><div class="cfreq">per month</div></div>
+    </div>
+    <div class="cdesc">Every month we deliver: 30 social media posts, 4 custom-designed creatives (offers, festivals, promotions), 1 WhatsApp broadcast message, and a monthly performance check. Everything done for you, consistently.</div>
+    <div class="ctags"><span class="ctag g">Best for Growth</span><span class="ctag">All Businesses</span></div>
+    <div class="ctime">⏱ Starts within 48 hours</div>
+  </div>
+
+  <div class="card" data-name="Business Website (1-page, mobile-ready)" data-icon="🌐" data-price="5999" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">🌐</span><span class="ctitle">Business Website (1-page)</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹5,999</div><div class="cfreq">one-time</div></div>
+    </div>
+    <div class="cdesc">A clean, fast, mobile-ready one-page website for your business — with your services, photos, contact info, WhatsApp button, Google Maps location, and reviews section. Hosted free on Netlify, no monthly charges.</div>
+    <div class="ctags"><span class="ctag g">No Monthly Fees</span><span class="ctag">Mobile Ready</span><span class="ctag">SEO Friendly</span></div>
+    <div class="ctime">⏱ Live in 3–5 days</div>
+  </div>
+
+  <div class="card" data-name="AI Customer Review Collection System" data-icon="⭐" data-price="1499" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">⭐</span><span class="ctitle">AI Review Collection System</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹1,499</div><div class="cfreq">one-time setup</div></div>
+    </div>
+    <div class="cdesc">We set up an automated WhatsApp message that goes to customers after their visit, politely asking for a Google review. More 5-star reviews = more trust = more new customers. Runs automatically every time.</div>
+    <div class="ctags"><span class="ctag">All Businesses</span><span class="ctag g">More Google Stars</span></div>
+    <div class="ctime">⏱ Setup in 1–2 days</div>
+  </div>
+
+  <div class="card" data-name="Staff AI Training Session (2 hours)" data-icon="🎓" data-price="2499" data-freq="one-time" onclick="toggleCard(this)">
+    <div class="sel-badge">✓</div>
+    <div class="card-top">
+      <div class="ct-left"><span class="cicon">🎓</span><span class="ctitle">Staff AI Training Session</span></div>
+      <div class="cprice-wrap"><div class="cprice">₹2,499</div><div class="cfreq">one-time</div></div>
+    </div>
+    <div class="cdesc">A 2-hour hands-on session (in-person in Coimbatore or via video call) where we train you or your staff to use AI tools daily — ChatGPT for writing, Canva AI for design, and automation tools for saving time.</div>
+    <div class="ctags"><span class="ctag">Teams</span><span class="ctag">Shop Owners</span><span class="ctag g">Practical & Hands-On</span></div>
+    <div class="ctime">⏱ Book any day this week</div>
+  </div>
+
+</div>
+
+<!-- PACKAGES -->
+<div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Or Choose a Ready Package</div><div class="sdiv-line"></div></div>
+<div class="pkgs">
+  <div class="pkg" onclick="selectPkg(this,'Starter Package',6999,'WhatsApp Chatbot Setup + Digital Menu + Google Business Setup + 30-Day Social Content')">
+    <div class="pkg-name">Starter</div>
+    <div class="pkg-price">₹6,999<sub>/once</sub></div>
+    <div class="pkg-per">Best for new businesses going digital</div>
+    <ul class="pkg-items">
+      <li>WhatsApp AI Chatbot Setup</li>
+      <li>Digital Menu with WhatsApp Link</li>
+      <li>Google Business Profile Setup</li>
+      <li>30-Day Social Media Content (1 month)</li>
+      <li>1 month WhatsApp support</li>
+    </ul>
+    <button class="pkg-btn">Select Package</button>
+  </div>
+  <div class="pkg hot" onclick="selectPkg(this,'Growth Package',12999,'Everything in Starter + Brand Design + Booking Page + Email Follow-Up + Monthly Content Retainer')">
+    <div class="pkg-name">Growth</div>
+    <div class="pkg-price">₹12,999<sub>/mo</sub></div>
+    <div class="pkg-per">For businesses ready to scale with AI</div>
+    <ul class="pkg-items">
+      <li>Everything in Starter</li>
+      <li>AI Brand Design Package</li>
+      <li>Online Booking Page</li>
+      <li>AI Email Follow-Up System</li>
+      <li>Monthly Content + Design Retainer</li>
+      <li>Priority WhatsApp support</li>
+    </ul>
+    <button class="pkg-btn">Select Package</button>
+  </div>
+  <div class="pkg" onclick="selectPkg(this,'Full Stack Package',19999,'Complete AI transformation — all services included + 1-page website + staff training + review system')">
+    <div class="pkg-name">Full Stack</div>
+    <div class="pkg-price">₹19,999<sub>/mo</sub></div>
+    <div class="pkg-per">Complete AI transformation of your business</div>
+    <ul class="pkg-items">
+      <li>Everything in Growth</li>
+      <li>1-Page Business Website</li>
+      <li>GST Invoice Generator Tool</li>
+      <li>AI Review Collection System</li>
+      <li>Staff AI Training (2 hours)</li>
+      <li>Daily WhatsApp support included</li>
+    </ul>
+    <button class="pkg-btn">Select Package</button>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Your Selected Services & Total</div><div class="sdiv-line"></div></div>
+<div class="summary">
+  <div class="summary-title">📋 Proposal Summary</div>
+  <div class="sum-list" id="sumList"><div class="sum-empty">No services selected yet — click any service card above to add it.</div></div>
+  <div style="border-top:1px solid var(--border);padding-top:.75rem">
+    <div class="sum-total">
+      <div class="tl">Total Investment</div>
+      <div class="ta" id="sumTotal">₹0</div>
+    </div>
+    <div class="sum-note" id="sumNote">Select services above to see your total.</div>
+    <div id="saveBadge" style="display:none" class="sum-save">🎉 <span id="saveAmt"></span> saved vs buying separately</div>
+  </div>
+</div>
+
+<!-- WHY US -->
+<div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Why PurePath AI</div><div class="sdiv-line"></div></div>
+<div class="why-grid">
+  <div class="why-card">
+    <span class="why-icon">🇮🇳</span>
+    <h4>Local & Trusted</h4>
+    <p>Based in Coimbatore. We understand Tamil Nadu businesses, local customers, and what actually works here.</p>
+  </div>
+  <div class="why-card">
+    <span class="why-icon">⚡</span>
+    <h4>Fast Delivery</h4>
+    <p>Most services delivered in 24–72 hours. No waiting weeks. You see results before you've even fully paid.</p>
+  </div>
+  <div class="why-card">
+    <span class="why-icon">🔒</span>
+    <h4>No Hidden Costs</h4>
+    <p>What you see is what you pay. No surprise charges, no monthly platform fees unless clearly stated.</p>
+  </div>
+</div>
+
+<!-- TERMS -->
+<div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">Terms & Process</div><div class="sdiv-line"></div></div>
+<div class="terms">
+  <h4>How It Works & What's Included</h4>
+  <div class="terms-grid">
+    <div class="term-item">50% advance to begin, 50% on delivery</div>
+    <div class="term-item">Payment via UPI / bank transfer</div>
+    <div class="term-item">Work begins within 24 hours of payment</div>
+    <div class="term-item">1 free revision included on every service</div>
+    <div class="term-item">All deliverables shared via WhatsApp or email</div>
+    <div class="term-item">This proposal is valid for 15 days from date above</div>
+    <div class="term-item">Monthly services billed on the same date each month</div>
+    <div class="term-item">Cancel monthly services with 7-day notice, no penalty</div>
+    <div class="term-item">All your data and content stays 100% yours</div>
+    <div class="term-item">WhatsApp support throughout the project</div>
+  </div>
+</div>
+
+<!-- SIGN ROW -->
+<div class="sign-row">
+  <div class="sign-box">
+    <div class="sl">Prepared By</div>
+    <div style="font-family:var(--fh);font-size:.95rem;font-weight:700;margin-top:.25rem">PurePath AI</div>
+    <div style="font-size:.75rem;color:var(--dim);margin-top:.15rem">Coimbatore, Tamil Nadu</div>
+    <div style="font-size:.75rem;color:var(--dim)">📱 <input class="editable" value="+91 99999 99999" style="font-size:.75rem;width:130px"/></div>
+    <div class="sign-line"></div>
+    <div class="sname">Authorised Signature</div>
+  </div>
+  <div class="sign-box">
+    <div class="sl">Accepted By</div>
+    <div style="font-family:var(--fh);font-size:.95rem;font-weight:700;margin-top:.25rem"><input class="editable" id="acceptName" placeholder="Client Name" style="font-family:var(--fh);font-size:.95rem;font-weight:700;width:180px"/></div>
+    <div style="font-size:.75rem;color:var(--dim);margin-top:.15rem"><input class="editable" placeholder="Business Name" style="font-size:.75rem;width:200px"/></div>
+    <div class="sign-line"></div>
+    <div class="sname">Signature & Date</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="pfooter">
+  Questions? WhatsApp us directly — <strong>PurePath AI, Coimbatore</strong> · hello@purepathai.in<br/>
+  <span style="opacity:.5;font-size:.65rem;margin-top:.3rem;display:block">This proposal was prepared exclusively for the business named above. Prices valid for 15 days from proposal date.</span>
+</div>
+
+</div><!-- end .page -->
+
+<script>
+// SET DATES & PROPOSAL NUMBER
+const today = new Date();
+const valid = new Date(today); valid.setDate(valid.getDate()+15);
+const fmt = d => d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+document.getElementById('propDate').textContent = fmt(today);
+document.getElementById('validDate').textContent = fmt(valid);
+document.getElementById('propNum').textContent = 'PPA-' + today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*900)+100);
+
+// SYNC BIZ NAME TO INTRO
+document.getElementById('bizName').addEventListener('input', function(){
+  document.getElementById('introName').textContent = this.value || 'there';
+});
+
+// TOGGLE CARD
+let selected = [];
+function toggleCard(card){
+  const name = card.dataset.name;
+  const price = parseInt(card.dataset.price);
+  const freq = card.dataset.freq;
+  const icon = card.dataset.icon;
+  const idx = selected.findIndex(s=>s.name===name);
+  if(idx>=0){ selected.splice(idx,1); card.classList.remove('selected'); }
+  else { selected.push({name,price,freq,icon}); card.classList.add('selected'); }
+  renderSummary();
+}
+
+// SELECT PACKAGE
+function selectPkg(el, name, price, desc){
+  // Clear individual selections
+  selected = [];
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  // Add package as single entry
+  selected = [{name, price, freq:'package', icon:'📦', desc}];
+  renderSummary();
+  document.getElementById('summary').scrollIntoView({behavior:'smooth'});
+}
+
+// RENDER SUMMARY
+function renderSummary(){
+  const list = document.getElementById('sumList');
+  const total = document.getElementById('sumTotal');
+  const note = document.getElementById('sumNote');
+  const saveBadge = document.getElementById('saveBadge');
+  const saveAmt = document.getElementById('saveAmt');
+
+  if(!selected.length){
+    list.innerHTML='<div class="sum-empty">No services selected yet — click any service card above to add it.</div>';
+    total.textContent='₹0';
+    note.textContent='Select services above to see your total.';
+    saveBadge.style.display='none';
+    return;
+  }
+
+  const sum = selected.reduce((a,s)=>a+s.price,0);
+  const hasMonthly = selected.some(s=>s.freq==='per month');
+
+  list.innerHTML = selected.map(s=>`
+    <div class="sum-row">
+      <span class="sname"><span class="sicon">${s.icon}</span> ${s.name}</span>
+      <span><span class="sprice">₹${s.price.toLocaleString('en-IN')}</span><span class="sfq"> ${s.freq}</span></span>
+    </div>
+  `).join('');
+
+  total.textContent = '₹' + sum.toLocaleString('en-IN');
+
+  // Build note
+  const oneTime = selected.filter(s=>s.freq==='one-time'||s.freq==='package').reduce((a,s)=>a+s.price,0);
+  const monthly = selected.filter(s=>s.freq==='per month').reduce((a,s)=>a+s.price,0);
+  if(oneTime && monthly){
+    note.textContent = `₹${oneTime.toLocaleString('en-IN')} one-time + ₹${monthly.toLocaleString('en-IN')}/month ongoing.`;
+  } else if(monthly){
+    note.textContent = `₹${monthly.toLocaleString('en-IN')} per month. Cancel anytime with 7-day notice.`;
+  } else {
+    note.textContent = `₹${oneTime.toLocaleString('en-IN')} total one-time payment. 50% now, 50% on delivery.`;
+  }
+
+  // Show save badge if 3+ items selected
+  if(selected.length >= 3 && selected[0].freq !== 'package'){
+    const saving = Math.round(sum * 0.10);
+    saveAmt.textContent = '₹'+saving.toLocaleString('en-IN');
+    saveBadge.style.display='inline-flex';
+  } else {
+    saveBadge.style.display='none';
+  }
+}
+
+// RESET
+function resetAll(){
+  selected=[];
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('bizName').value='Business Name';
+  document.getElementById('bizType').value='Restaurant / Clinic / Shop — Coimbatore';
+  document.getElementById('introName').textContent='there';
+  renderSummary();
+}
+</script>
+</body>
+</html>
